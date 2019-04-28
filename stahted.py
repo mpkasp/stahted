@@ -4,6 +4,7 @@ import re
 import time
 import json
 from slackclient import SlackClient
+from keys import SLACK_KEY
 
 try:
     import RPi.GPIO as GPIO
@@ -13,7 +14,7 @@ except ModuleNotFoundError as e:
 
 class Stahted:
     def __init__(self, alert_gpio):
-        self.slack = SlackClient()
+        self.slack = SlackClient(SLACK_KEY)
         self.alert_gpio = alert_gpio
         self.alert_start = None
         self.alert_duration = 30

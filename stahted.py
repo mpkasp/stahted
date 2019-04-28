@@ -49,6 +49,7 @@ class Stahted:
                             channel=channel,
                             text="Alert complete :robot_face:",
                             as_user=True)
+                    self.channels = set()
 
                 for message in self.slack.rtm_read():
                     if self.at_message(message) or self.direct_message(message):

@@ -1,0 +1,1 @@
+SLACK_KEY = "xoxb-super-secret-slackkey"

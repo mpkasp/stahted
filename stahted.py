@@ -16,13 +16,14 @@ except ModuleNotFoundError as e:
 class Stahted:
     def __init__(self, alert_gpio):
         while not self.internet_on():
-            sleep(3)
+            time.sleep(3)
             pass
 
         self.slack = SlackClient(SLACK_KEY)
         self.alert_gpio = alert_gpio
         self.alert_start = None
         self.alert_duration = 30
+        self.channels = set()
 
         # Fetch your Bot's User ID
         user_list = self.slack.api_call("users.list")
@@ -41,18 +42,20 @@ class Stahted:
 
             while True:
                 if self.check_alert():
-                    self.slack.api_call(
-                        "chat.postMessage",
-                        channel=message['channel'],
-                        text="",
-                        as_user=True)
+                    print("Done!")
+                    for channel in self.channels:
+                        self.slack.api_call(
+                            "chat.postMessage",
+                            channel=channel,
+                            text="Alert complete :robot_face:",
+                            as_user=True)
 
                 for message in self.slack.rtm_read():
-                    if 'text' in message and message['text'].startswith("<@%s>" % self.slack_user_id):
+                    if self.at_message(message) or self.direct_message(message):
                         print("Message received: %s" % json.dumps(message, indent=2))
-                        message_text = message['text'].\
-                            split("<@%s>" % self.slack_user_id)[1].\
-                            strip()
+                        message_text = message['text']
+                        if self.at_message(message):
+                            message_text = message['text'].split("<@%s>" % self.slack_user_id)[1].strip()
 
                         try:
                             self.alert_duration = self.extract_int(message_text)
@@ -72,8 +75,21 @@ class Stahted:
                             channel=message['channel'],
                             text=":alert: :alert: Jonathan Placa has been alerted{} :alert: :alert:".format(response),
                             as_user=True)
+                        self.channels.add(message['channel'])
 
                 time.sleep(1)
+
+    def at_message(self, message):
+        if 'user' in message and message['user'] != self.slack_user_id:
+            return 'text' in message and message['text'].startswith("<@%s>" % self.slack_user_id)
+        else:
+            return False
+
+    def direct_message(self, message):
+        if 'user' in message and message['user'] != self.slack_user_id:
+            return 'text' in message and 'channel' in message and message['channel'].startswith("D")
+        else:
+            return False
 
     def internet_on(self):
         try:

@@ -3,6 +3,7 @@
 import re
 import time
 import json
+import urllib
 from slackclient import SlackClient
 from keys import SLACK_KEY
 
@@ -14,6 +15,10 @@ except ModuleNotFoundError as e:
 
 class Stahted:
     def __init__(self, alert_gpio):
+        while not self.internet_on():
+            sleep(3)
+            pass
+
         self.slack = SlackClient(SLACK_KEY)
         self.alert_gpio = alert_gpio
         self.alert_start = None
@@ -69,6 +74,13 @@ class Stahted:
                             as_user=True)
 
                 time.sleep(1)
+
+    def internet_on(self):
+        try:
+            urllib.request.urlopen('http://google.com', timeout=1)
+            return True
+        except urllib.request.URLError:
+            return False
 
     def extract_int(self, msg):
         return int(''.join(list(filter(str.isdigit, msg))))

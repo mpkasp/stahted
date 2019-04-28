@@ -30,30 +30,30 @@ def wifi_connect(ssid, psk):
     cmd_result = os.system(cmd)
     print cmd + " - " + str(cmd_result)
 
-    # restart wifi adapter, TODO: does this even do anything anymore?
-    cmd = sudo_mode + 'ifdown wlan0'
-    cmd_result = os.system(cmd)
-    print cmd + " - " + str(cmd_result)
-
-    time.sleep(2)
-
-    cmd = sudo_mode + 'ifup wlan0'
-    cmd_result = os.system(cmd)
-    print cmd + " - " + str(cmd_result)
-
-    time.sleep(10)
-
-    cmd = 'iwconfig wlan0'
-    cmd_result = os.system(cmd)
-    print cmd + " - " + str(cmd_result)
-
-    cmd = 'ifconfig wlan0'
-    cmd_result = os.system(cmd)
-    print cmd + " - " + str(cmd_result)
-
     # reconfigure wifi now that we have new credentials, latest rpi recommendation to reconfigure and restart wifi via https://www.raspberrypi.org/forums/viewtopic.php?t=198274#p1238023
-    p = subprocess.Popen(['wpa_cli', '-i', 'wlan0', 'reconfigure'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['wpa_cli', '-i', 'wlan0', 'reconfigure'])
     out, err = p.communicate()
+
+    # restart wifi adapter, TODO: does this even do anything anymore?
+    # cmd = sudo_mode + 'ifdown wlan0'
+    # cmd_result = os.system(cmd)
+    # print cmd + " - " + str(cmd_result)
+
+    # time.sleep(2)
+
+    # cmd = sudo_mode + 'ifup wlan0'
+    # cmd_result = os.system(cmd)
+    # print cmd + " - " + str(cmd_result)
+
+    # time.sleep(10)
+
+    # cmd = 'iwconfig wlan0'
+    # cmd_result = os.system(cmd)
+    # print cmd + " - " + str(cmd_result)
+
+    # cmd = 'ifconfig wlan0'
+    # cmd_result = os.system(cmd)
+    # print cmd + " - " + str(cmd_result)
 
     p = subprocess.Popen(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

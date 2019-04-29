@@ -130,9 +130,9 @@ class Stahted:
     def set_gpio(self, gpio, enabled):
         try:
             if enabled:
-                GPIO.output(gpio, GPIO.HIGH)
-            else:
                 GPIO.output(gpio, GPIO.LOW)
+            else:
+                GPIO.output(gpio, GPIO.HIGH)
         except NameError as e:
             print("No RPi, let's say we set the gpio {}...".format(enabled))
 

@@ -18,9 +18,9 @@ Setting up the service
 ----
 
 ```
-cp ./stahted.service /lib/systemd/system/
+sudo cp ./stahted.service /lib/systemd/system/
 sudo chmod 644 /lib/systemd/system/stahted.service
-chmod +x /home/pi/stahted/stahted.py
+chmod +x ./stahted.py
 sudo systemctl daemon-reload
 sudo systemctl enable stahted.service
 sudo systemctl start stahted.service

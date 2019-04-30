@@ -8,12 +8,27 @@ Setup
 -----
 1. `cp ./keys.example.py ./keys.py` and create a bot, and grab your key [here](https://my.slack.com/services/new/bot).
 
-2. Pull the files on this repo to your rpi and add them to your /etc/rc.local so the start at boot
+2. Pull the files on this repo to your rpi and add them to your /etc/rc.local so the start at boot (or see service setup instructions below)
 
 3. `pip3 install requirements.txt`
 
 4. You may need to make sure bluetooth starts in advertising mode, check out `bluetoothctl` and you can probably just create a bash script to get it to work.
 
+Setting up the service
+----
+
+```
+cp ./stahted.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/stahted.service
+chmod +x /home/pi/stahted/stahted.py
+sudo systemctl daemon-reload
+sudo systemctl enable stahted.service
+sudo systemctl start stahted.service
+```
+
+For every change that we do on the /lib/systemd/system folder we need to execute a daemon-reload (third line of previous code). If we want to check the status of our service, you can execute:
+
+`sudo systemctl status stahted.service`
 
 Notes
 ----

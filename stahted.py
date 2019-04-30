@@ -124,6 +124,7 @@ class Stahted:
             GPIO.setmode(GPIO.BCM)
             GPIO.setwarnings(False)
             GPIO.setup(gpio, GPIO.OUT)
+            self.alarm_off()
         except NameError as e:
             print("No RPi, let's say it's now configured...")
 

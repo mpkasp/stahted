@@ -18,8 +18,8 @@ Setting up the service
 ----
 
 ```
-sudo cp ./stahted.service /lib/systemd/system/
-sudo chmod 644 /lib/systemd/system/stahted.service
+sudo cp ./stahted.service /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/stahted.service
 chmod +x ./stahted.py
 sudo systemctl daemon-reload
 sudo systemctl enable stahted.service

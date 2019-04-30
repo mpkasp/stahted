@@ -6,6 +6,8 @@ After=multi-user.target
 Type=simple
 ExecStart=/home/pi/Desktop/stahted/stahted.py
 Restart=on-abort
+User=pi
+Group=pi
  		
 [Install]
 WantedBy=multi-user.target

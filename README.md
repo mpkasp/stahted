@@ -30,6 +30,8 @@ For every change that we do on the /lib/systemd/system folder we need to execute
 
 `sudo systemctl status stahted.service`
 
+Repeat above for wifi-config.service
+
 Notes
 ----
 Learnings were taking from (blog.benjie.me)[https://blog.benjie.me/building-a-slack-bot-to-talk-with-a-raspberry-pi/], and (this project to setup wifi via an android phone over bluetooth)[https://github.com/brendan-myers/rpi3-wifi-conf-android]. I don't have as great of a readme but you can probably figure it out with my code and their links :)

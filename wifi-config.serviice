@@ -1,0 +1,13 @@
+[Unit]
+Description=WifiConfig
+After=multi-user.target
+ 
+[Service]
+Type=simple
+ExecStart=/home/pi/Desktop/stahted/rpi3-wifi-conf.py
+Restart=on-abort
+User=pi
+Group=pi
+ 		
+[Install]
+WantedBy=multi-user.target

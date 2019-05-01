@@ -24,7 +24,7 @@ class Stahted:
         self.slack = SlackClient(SLACK_KEY)
         self.alert_gpio = alert_gpio
         self.alert_start = None
-        self.alert_duration = DEFAULT_ALERT_DURATION
+        self.alert_duration = self.DEFAULT_ALERT_DURATION
         self.channels = set()
 
         # Fetch your Bot's User ID
@@ -41,6 +41,7 @@ class Stahted:
         # Start connection
         if self.slack.rtm_connect():
             print("Connected!")
+            return
 
             while True:
                 if self.check_alert():
@@ -68,7 +69,7 @@ class Stahted:
                         response = ''
                         if self.alert_duration > 600:
                             self.alert_duration = 600
-                        if self.alert_duration != DEFAULT_ALERT_DURATION:
+                        if self.alert_duration != self.DEFAULT_ALERT_DURATION:
                             response = ' for {} seconds'.format(self.alert_duration)
 
                         # if re.match(r'.*(stahted).*', message_text, re.IGNORECASE):
@@ -108,7 +109,7 @@ class Stahted:
         current_time = time.time()
         if self.alert_start is not None and (current_time - self.alert_start) > self.alert_duration:
             self.alert_start = None
-            self.alert_duration = DEFAULT_ALERT_DURATION
+            self.alert_duration = self.DEFAULT_ALERT_DURATION
             self.alarm_off()
             return True
         else:

@@ -82,7 +82,7 @@ class Stahted:
 
     def at_message(self, message):
         if 'user' in message and message['user'] != self.slack_user_id:
-            return 'text' in message and message['text'].startswith("<@%s>" % self.slack_user_id)
+            return 'text' in message and "<@{}>".format(self.slack_user_id) in message['text']
         else:
             return False
 

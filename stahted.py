@@ -14,6 +14,8 @@ except ModuleNotFoundError as e:
 
 
 class Stahted:
+    DEFAULT_ALERT_DURATION = 10
+
     def __init__(self, alert_gpio):
         while not self.internet_on():
             time.sleep(3)
@@ -22,7 +24,7 @@ class Stahted:
         self.slack = SlackClient(SLACK_KEY)
         self.alert_gpio = alert_gpio
         self.alert_start = None
-        self.alert_duration = 30
+        self.alert_duration = DEFAULT_ALERT_DURATION
         self.channels = set()
 
         # Fetch your Bot's User ID
@@ -66,7 +68,7 @@ class Stahted:
                         response = ''
                         if self.alert_duration > 600:
                             self.alert_duration = 600
-                        if self.alert_duration != 30:
+                        if self.alert_duration != DEFAULT_ALERT_DURATION:
                             response = ' for {} seconds'.format(self.alert_duration)
 
                         # if re.match(r'.*(stahted).*', message_text, re.IGNORECASE):
@@ -106,7 +108,7 @@ class Stahted:
         current_time = time.time()
         if self.alert_start is not None and (current_time - self.alert_start) > self.alert_duration:
             self.alert_start = None
-            self.alert_duration = 30
+            self.alert_duration = DEFAULT_ALERT_DURATION
             self.alarm_off()
             return True
         else:

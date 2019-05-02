@@ -41,7 +41,6 @@ class Stahted:
         # Start connection
         if self.slack.rtm_connect():
             print("Connected!")
-            return
 
             while True:
                 if self.check_alert():

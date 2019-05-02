@@ -15,6 +15,7 @@ except ModuleNotFoundError as e:
 
 class Stahted:
     DEFAULT_ALERT_DURATION = 10
+    DEFAULT_SNOOZE_DURATION = 5 * 60
 
     def __init__(self, alert_gpio):
         while not self.internet_on():
@@ -25,6 +26,10 @@ class Stahted:
         self.alert_gpio = alert_gpio
         self.alert_start = None
         self.alert_duration = self.DEFAULT_ALERT_DURATION
+
+        self.snooze_start = None
+        self.snooze_duration = self.DEFAULT_SNOOZE_DURATION
+
         self.channels = set()
 
         # Fetch your Bot's User ID
@@ -43,6 +48,9 @@ class Stahted:
             print("Connected!")
 
             while True:
+                if self.check_snooze():
+                    print("Done snoozing!")
+
                 if self.check_alert():
                     print("Done!")
                     for channel in self.channels:
@@ -61,24 +69,65 @@ class Stahted:
                             message_text = message['text'].split("<@%s>" % self.slack_user_id)[1].strip()
 
                         try:
-                            self.alert_duration = self.extract_int(message_text)
+                            duration_seconds = self.extract_int(message_text)
+                            duration_text = '{} seconds'.format(duration_seconds)
+                            if 'min' in message_text:
+                                duration_seconds = duration_seconds * 60
+                            elif 'hour' in message_text:
+                                duration_seconds = duration_seconds * 60 * 60
                         except ValueError:
-                            pass
+                            duration_seconds = None
 
-                        response = ''
-                        if self.alert_duration > 600:
-                            self.alert_duration = 600
-                        if self.alert_duration != self.DEFAULT_ALERT_DURATION:
-                            response = ' for {} seconds'.format(self.alert_duration)
+                        if 'snooze' in message_text:
+                            self.snooze_start = time.time()
 
-                        # if re.match(r'.*(stahted).*', message_text, re.IGNORECASE):
-                        self.alarm_on()
-                        self.slack.api_call(
-                            "chat.postMessage",
-                            channel=message['channel'],
-                            text=":alert: :alert: Jonathan Placa has been alerted{} :alert: :alert:".format(response),
-                            as_user=True)
-                        self.channels.add(message['channel'])
+                            if duration_seconds is not None:
+                                self.snooze_duration = duration_seconds
+
+                            response = ''
+                            if self.snooze_duration > 8 * 60 * 60:
+                                self.snooze_duration = 8 * 60 * 60
+                            if self.snooze_duration > (60 * 60):
+                                response = ' for {} hours'.format(self.snooze_duration / (60.0 * 60.0))
+                            if self.snooze_duration > 60:
+                                response = ' for {} minutes'.format(self.snooze_duration / 60.0)
+                            else:
+                                response = ' for {} seconds'.format(self.snooze_duration)
+
+                            self.slack.api_call(
+                                "chat.postMessage",
+                                channel=message['channel'],
+                                text="You have snoozed alert{} :sleeping:".format(response),
+                                as_user=True)
+                            self.channels.add(message['channel'])
+
+                        else:
+                            if self.snooze_start is not None:
+                                print("Snooze!")
+                                self.slack.api_call(
+                                    "chat.postMessage",
+                                    channel=message['channel'],
+                                    text=":sleeping: Jonathan Placa won't hear you, alerts have been snoozed.".format(response),
+                                    as_user=True)
+                                continue
+
+                            if duration_seconds is not None:
+                                self.alert_duration = duration_seconds
+
+                            response = ''
+                            if self.alert_duration > 600:
+                                self.alert_duration = 600
+                            if self.alert_duration != self.DEFAULT_ALERT_DURATION:
+                                response = ' for {} seconds'.format(self.alert_duration)
+
+                            # if re.match(r'.*(stahted).*', message_text, re.IGNORECASE):
+                            self.alarm_on()
+                            self.slack.api_call(
+                                "chat.postMessage",
+                                channel=message['channel'],
+                                text=":alert: :alert: Jonathan Placa has been alerted{} :alert: :alert:".format(response),
+                                as_user=True)
+                            self.channels.add(message['channel'])
 
                 time.sleep(1)
 
@@ -103,6 +152,15 @@ class Stahted:
 
     def extract_int(self, msg):
         return int(''.join(list(filter(str.isdigit, msg))))
+
+    def check_snooze(self):
+        current_time = time.time()
+        if self.snooze_start is not None and (current_time - self.snooze_start) > self.snooze_duration:
+            self.snooze_start = None
+            self.snooze_duration = self.DEFAULT_SNOOZE_DURATION
+            return True
+        else:
+            return False
 
     def check_alert(self):
         current_time = time.time()

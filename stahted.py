@@ -16,6 +16,10 @@ except ModuleNotFoundError as e:
 class Stahted:
     DEFAULT_ALERT_DURATION = 10
     DEFAULT_SNOOZE_DURATION = 5 * 60
+    ADMIN_USERS = ['U2CR32LR0',  # Mike
+                   'U2CQT94GM',  # Jon
+                   'U2CQL19AB',  # Hanna
+                   ]
 
     def __init__(self, alert_gpio):
         while not self.internet_on():
@@ -79,6 +83,9 @@ class Stahted:
                             duration_seconds = None
 
                         if 'snooze' in message_text:
+                            if not('user' in message and message['user'] in self.ADMIN_USERS):
+                                continue
+
                             self.snooze_start = time.time()
 
                             if duration_seconds is not None:

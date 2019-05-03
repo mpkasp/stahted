@@ -39,7 +39,7 @@ class Stahted:
         # Fetch your Bot's User ID
         user_list = self.slack.api_call("users.list")
         for user in user_list.get('members'):
-            if user.get('name') == "stahted":
+            if user.get('name') == "jonaphone" or user.get('name') == "stahted":
                 print('Found user `stahted`... continuing...')
                 self.slack_user_id = user.get('id')
                 break

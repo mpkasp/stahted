@@ -114,7 +114,7 @@ class Stahted:
                                 self.slack.api_call(
                                     "chat.postMessage",
                                     channel=message['channel'],
-                                    text=":sleeping: Jonathan Placa won't hear you, alerts have been snoozed.".format(response),
+                                    text=":sleeping: Jonathan won't hear you, alerts have been snoozed.".format(response),
                                     as_user=True)
                                 continue
 
@@ -132,7 +132,7 @@ class Stahted:
                             self.slack.api_call(
                                 "chat.postMessage",
                                 channel=message['channel'],
-                                text=":alert: :alert: Jonathan Placa has been alerted{} :alert: :alert:".format(response),
+                                text=":alert: :alert: Jonathan has been alerted{} :alert: :alert:".format(response),
                                 as_user=True)
                             self.channels.add(message['channel'])
 
